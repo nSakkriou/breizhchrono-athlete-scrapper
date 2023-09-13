@@ -3,12 +3,13 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from email.mime.base import MIMEBase
 from email import encoders
+from config import GMAIL_PASSWORD, GMAIL_EMAIL
 
 class Mailer:
 
     def __init__(self, receiver: str, filename: str, event_name: str, club: str) -> None:
-        self.sender = "nathansakkriou.newsletter@gmail.com"
-        self.password = "awbz yzsa rbve fzdd"
+        self.sender = GMAIL_EMAIL
+        self.password = GMAIL_PASSWORD
 
         self.receiver = receiver
 

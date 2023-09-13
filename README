@@ -1,0 +1,12 @@
+Permet de récupérer sous la forme d'un CSV, et d'envoyer ou non par mail, les données d'un athlete ou d'un club sur une course
+chronométrée par Breizh Chrono.
+
+Fonctionnement :
+python main.py --lien url_course_breizhchrono --club nom_du_club --mail True/False --receiver email_du_receveur
+
+Pour parametrer l'envoi de mail il suffit de créer un fichier config.py avec à l'intérieur deux variables :
+GMAIL_EMAIL
+GMAIL_PASSWORD
+
+En utilisant les mots de passes d'application.
+Pour faire cette manip, il y a ce tuto : https://www.youtube.com/watch?v=g_j6ILT-X0k&t=464s&ab_channel=ThePyCoach
