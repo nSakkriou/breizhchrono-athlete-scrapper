@@ -3,3 +3,6 @@
 *.log
 
 __pycache__
+data/
+errors_pages/
+log/
