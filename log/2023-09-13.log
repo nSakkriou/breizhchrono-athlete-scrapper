@@ -546,3 +546,45 @@
 2023-09-13 14:56:20,792; INFO; email correctly setup (sender: nathansakkriou.newsletter@gmail.com, receiver: maelysjouault@aol.fr)
 2023-09-13 14:56:21,770; INFO; email send ! (sender: nathansakkriou.newsletter@gmail.com, receiver: maelysjouault@aol.fr)
 2023-09-13 14:56:21,808; INFO; **End scrapping + mail - duration: 7.273775339126587**
+2023-09-13 19:39:48,179; INFO; **Started with param (lien: https://www.breizhchrono.com/detail-de-la-course/triathlonswimrundinardcoted-emeraude-triathlondistanceolympiquegroupeedouarddenis-relais-2023-16400, club: Rennes triathlon)**
+2023-09-13 19:39:48,179; INFO; scrapURLS method start
+2023-09-13 19:39:49,135; INFO; initPageScrappers method start
+2023-09-13 19:39:49,135; INFO; PageScrapper instance init (https://www.breizhchrono.com/detail-de-la-course/triathlonswimrundinardcoted-emeraude-runandbike-2023-16380)
+2023-09-13 19:39:49,135; INFO; PageScrapper instance init (https://www.breizhchrono.com/detail-de-la-course/triathlonswimrundinardcoted-emeraude-triathlondecouverteaesiomutuelle-2023-16381)
+2023-09-13 19:39:49,135; INFO; PageScrapper instance init (https://www.breizhchrono.com/detail-de-la-course/triathlonswimrundinardcoted-emeraude-coursed-orientation-2023-16382)
+2023-09-13 19:39:49,135; INFO; PageScrapper instance init (https://www.breizhchrono.com/detail-de-la-course/triathlonswimrundinardcoted-emeraude-triathlonlonguedistance-2023-16383)
+2023-09-13 19:39:49,135; INFO; PageScrapper instance init (https://www.breizhchrono.com/detail-de-la-course/triathlonswimrundinardcoted-emeraude-triathlondecouverteaesiomutuelle-relais-2023-16384)
+2023-09-13 19:39:49,135; INFO; PageScrapper instance init (https://www.breizhchrono.com/detail-de-la-course/triathlonswimrundinardcoted-emeraude-triathlonlonguedistance-relais-2023-16385)
+2023-09-13 19:39:49,135; INFO; PageScrapper instance init (https://www.breizhchrono.com/detail-de-la-course/triathlonswimrundinardcoted-emeraude-triathlondistanceolympiquegroupeedouarddenis-2023-16399)
+2023-09-13 19:39:49,135; INFO; PageScrapper instance init (https://www.breizhchrono.com/detail-de-la-course/triathlonswimrundinardcoted-emeraude-triathlondistanceolympiquegroupeedouarddenis-relais-2023-16400)
+2023-09-13 19:39:49,136; INFO; PageScrapper instance init (https://www.breizhchrono.com/detail-de-la-course/triathlonswimrundinardcoted-emeraude-swimrunmediumzoggsduo-2023-16408)
+2023-09-13 19:39:49,136; INFO; PageScrapper instance init (https://www.breizhchrono.com/detail-de-la-course/triathlonswimrundinardcoted-emeraude-swimrunlongsuperupleurtuitduo-2023-16409)
+2023-09-13 19:39:49,136; INFO; PageScrapper instance init (https://www.breizhchrono.com/detail-de-la-course/triathlonswimrundinardcoted-emeraude-swimruncourtduo-2023-16410)
+2023-09-13 19:39:49,136; INFO; PageScrapper instance init (https://www.breizhchrono.com/detail-de-la-course/triathlonswimrundinardcoted-emeraude-swimruncourtsolo-2023-16411)
+2023-09-13 19:39:49,136; INFO; PageScrapper instance init (https://www.breizhchrono.com/detail-de-la-course/triathlonswimrundinardcoted-emeraude-swimrunlongsuperupleurtuitsolo-2023-16412)
+2023-09-13 19:39:49,136; INFO; PageScrapper instance init (https://www.breizhchrono.com/detail-de-la-course/triathlonswimrundinardcoted-emeraude-swimrunmediumzoggssolo-2023-16413)
+2023-09-13 19:39:49,136; INFO; launchPageScrappers method start
+2023-09-13 19:39:49,136; INFO; PageScrapper scrapDataAthlete start (instance of https://www.breizhchrono.com/detail-de-la-course/triathlonswimrundinardcoted-emeraude-runandbike-2023-16380)
+2023-09-13 19:39:49,851; WARNING; PageScrapper scrapDataAthlete warning (find table), check ./errors_pages/https-www-breizhchrono-com-detail-de-la-course-triathlonswimrundinardcoted-emeraude-runandbike-2023-16380.html (instance of https://www.breizhchrono.com/detail-de-la-course/triathlonswimrundinardcoted-emeraude-runandbike-2023-16380) error message: 'NoneType' object has no attribute 'find'
+2023-09-13 19:39:49,862; INFO; PageScrapper scrapDataAthlete start (instance of https://www.breizhchrono.com/detail-de-la-course/triathlonswimrundinardcoted-emeraude-triathlondecouverteaesiomutuelle-2023-16381)
+2023-09-13 19:39:50,669; INFO; PageScrapper scrapDataAthlete start (instance of https://www.breizhchrono.com/detail-de-la-course/triathlonswimrundinardcoted-emeraude-coursed-orientation-2023-16382)
+2023-09-13 19:39:51,437; WARNING; PageScrapper scrapDataAthlete warning (find table), check ./errors_pages/https-www-breizhchrono-com-detail-de-la-course-triathlonswimrundinardcoted-emeraude-coursed-orientation-2023-16382.html (instance of https://www.breizhchrono.com/detail-de-la-course/triathlonswimrundinardcoted-emeraude-coursed-orientation-2023-16382) error message: 'NoneType' object has no attribute 'find'
+2023-09-13 19:39:51,451; INFO; PageScrapper scrapDataAthlete start (instance of https://www.breizhchrono.com/detail-de-la-course/triathlonswimrundinardcoted-emeraude-triathlonlonguedistance-2023-16383)
+2023-09-13 19:39:52,182; INFO; PageScrapper scrapDataAthlete start (instance of https://www.breizhchrono.com/detail-de-la-course/triathlonswimrundinardcoted-emeraude-triathlondecouverteaesiomutuelle-relais-2023-16384)
+2023-09-13 19:39:52,943; WARNING; PageScrapper scrapDataAthlete warning (find table), check ./errors_pages/https-www-breizhchrono-com-detail-de-la-course-triathlonswimrundinardcoted-emeraude-triathlondecouverteaesiomutuelle-relais-2023-16384.html (instance of https://www.breizhchrono.com/detail-de-la-course/triathlonswimrundinardcoted-emeraude-triathlondecouverteaesiomutuelle-relais-2023-16384) error message: 'NoneType' object has no attribute 'find'
+2023-09-13 19:39:52,956; INFO; PageScrapper scrapDataAthlete start (instance of https://www.breizhchrono.com/detail-de-la-course/triathlonswimrundinardcoted-emeraude-triathlonlonguedistance-relais-2023-16385)
+2023-09-13 19:39:53,655; INFO; PageScrapper scrapDataAthlete start (instance of https://www.breizhchrono.com/detail-de-la-course/triathlonswimrundinardcoted-emeraude-triathlondistanceolympiquegroupeedouarddenis-2023-16399)
+2023-09-13 19:39:54,551; INFO; PageScrapper scrapDataAthlete start (instance of https://www.breizhchrono.com/detail-de-la-course/triathlonswimrundinardcoted-emeraude-triathlondistanceolympiquegroupeedouarddenis-relais-2023-16400)
+2023-09-13 19:39:55,337; INFO; PageScrapper scrapDataAthlete start (instance of https://www.breizhchrono.com/detail-de-la-course/triathlonswimrundinardcoted-emeraude-swimrunmediumzoggsduo-2023-16408)
+2023-09-13 19:39:56,111; INFO; PageScrapper scrapDataAthlete start (instance of https://www.breizhchrono.com/detail-de-la-course/triathlonswimrundinardcoted-emeraude-swimrunlongsuperupleurtuitduo-2023-16409)
+2023-09-13 19:39:56,886; WARNING; PageScrapper scrapDataAthlete warning (find table), check ./errors_pages/https-www-breizhchrono-com-detail-de-la-course-triathlonswimrundinardcoted-emeraude-swimrunlongsuperupleurtuitduo-2023-16409.html (instance of https://www.breizhchrono.com/detail-de-la-course/triathlonswimrundinardcoted-emeraude-swimrunlongsuperupleurtuitduo-2023-16409) error message: 'NoneType' object has no attribute 'find'
+2023-09-13 19:39:56,901; INFO; PageScrapper scrapDataAthlete start (instance of https://www.breizhchrono.com/detail-de-la-course/triathlonswimrundinardcoted-emeraude-swimruncourtduo-2023-16410)
+2023-09-13 19:39:57,596; INFO; PageScrapper scrapDataAthlete start (instance of https://www.breizhchrono.com/detail-de-la-course/triathlonswimrundinardcoted-emeraude-swimruncourtsolo-2023-16411)
+2023-09-13 19:39:58,313; INFO; PageScrapper scrapDataAthlete start (instance of https://www.breizhchrono.com/detail-de-la-course/triathlonswimrundinardcoted-emeraude-swimrunlongsuperupleurtuitsolo-2023-16412)
+2023-09-13 19:39:59,002; INFO; PageScrapper scrapDataAthlete start (instance of https://www.breizhchrono.com/detail-de-la-course/triathlonswimrundinardcoted-emeraude-swimrunmediumzoggssolo-2023-16413)
+2023-09-13 19:39:59,734; INFO; getAthleteData2CSV method start
+2023-09-13 19:39:59,735; INFO; getEventNameandFilename method start
+2023-09-13 19:39:59,735; INFO; *End scrapping - duration: 11.557911396026611*
+2023-09-13 19:39:59,748; INFO; email correctly setup (sender: nathansakkriou.newsletter@gmail.com, receiver: nathansakkriou@gmail.com)
+2023-09-13 19:40:00,844; INFO; email send ! (sender: nathansakkriou.newsletter@gmail.com, receiver: nathansakkriou@gmail.com)
+2023-09-13 19:40:00,887; INFO; **End scrapping + mail - duration: 12.709478616714478**
