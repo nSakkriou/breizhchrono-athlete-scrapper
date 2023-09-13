@@ -1,3 +1,5 @@
-./data/*
-./errors_pages/*
-__pycache__/*
+*.html
+*.csv
+*.log
+
+__pycache__
