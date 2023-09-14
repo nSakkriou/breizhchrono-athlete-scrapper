@@ -118,7 +118,7 @@ def scrap_one_event(lien: str, club: str, mail: bool, receiver: str):
     urls = URLScrapper(lien, club)
     urls.build()
 
-    if mail:
+    if mail and urls.filename != "unnamed":
         logging.info(f"START : send mail (receiver: {receiver}, lien: {lien})")
         mailer = Mailer(receiver, urls.filename, urls.eventName, club)
         mailer.setup()

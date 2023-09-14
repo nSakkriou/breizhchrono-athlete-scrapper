@@ -2,7 +2,7 @@ Permet de récupérer sous la forme d'un CSV, et d'envoyer ou non par mail, les 
 chronométrée par Breizh Chrono.
 
 Fonctionnement :
-python main.py --lien url_course_breizhchrono --club nom_du_club --mail True/False --receiver email_du_receveur
+python scrap_all_event --lien url_course_breizhchrono --club nom_du_club --mail True/False --receiver email_du_receveur
 
 Pour parametrer l'envoi de mail il suffit de créer un fichier config.py avec à l'intérieur ces variables :
 GMAIL_EMAIL: Str
