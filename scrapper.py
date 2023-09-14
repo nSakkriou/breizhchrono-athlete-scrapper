@@ -36,9 +36,14 @@ class AthleteList:
 
     def toCSV(self):
         year = datetime.date.today().year
-        event_name = self.list[1].event
-        nameFile = slugify(event_name + "-" + str(year))
-        
+        try:
+            event_name = self.list[1].event
+            nameFile = slugify(event_name + "-" + str(year))
+        except Exception as e:
+            logging.warning("No athlete of club found on this event")
+            event_name = "unnamed"
+            nameFile = "unnamed"
+
         with open(f"./data/{nameFile}.csv", "w", newline="", encoding="utf8") as file:
             write = csv.writer(file)
 
@@ -62,53 +67,80 @@ class URLScrapper(Scrapper):
 
         super().__init__()
 
+        logging.info(f"START : URLScrapper instance (lien: {self.URL}, club: {self.club})")
+
+
     def scrapURLS(self) -> None:
         """
         Fill self.listURLS with all race links
         return: None
         """
+        logging.info(f"START : URLScrapper method scrapURLS")
+
         soup = self.scrapPage(self.URL)
         
         raceContainer = soup.find("div", id="cop-course-container")
         for a in raceContainer.find_all("a"):
-            self.listURLS.append(self.domainName + a["href"])
+            race_link = self.domainName + a["href"]
+            self.listURLS.append(race_link)
+            logging.info(f"DURING : URLScrapper method scrapURLS : add race {race_link}")
+
+        logging.info(f"END : URLScrapper method scrapURLS")
+
 
     def initPageScrappers(self):
+        logging.info(f"START : URLScrapper method initPageScrappers")
+
         for url in self.listURLS:
             self.listPageScrappers.append(PageScrapper(url, self.club))
 
+        logging.info(f"END : URLScrapper method initPageScrappers")
+
     def launchPageScrappers(self):
+        logging.info(f"START : URLScrapper method launchPageScrappers")
+        
         for pageScrapper in self.listPageScrappers:
             pageScrapper.scrapDataAthlete()
 
+        logging.info(f"END : URLScrapper method launchPageScrappers")
+
     def getAthleteData2CSV(self):
+        logging.info(f"START : URLScrapper method getAthleteData2CSV")
+        
         for pageScrapper in self.listPageScrappers:
             self.athleteList.addList2AthleteList(pageScrapper.athleteList)
 
         self.athleteList.toCSV()
 
-    def getEventNameandFilename(self):
-        year = datetime.date.today().year
-        self.eventName = self.athleteList.list[1].event
-        self.filename = slugify(self.eventName + "-" + str(year))
+        logging.info(f"END : URLScrapper method getAthleteData2CSV")
 
+    def getEventNameandFilename(self):
+        logging.info(f"END : URLScrapper method getEventNameandFilename")
+
+        year = datetime.date.today().year
+        try:
+            self.eventName = self.athleteList.list[1].event
+            self.filename = slugify(self.eventName + "-" + str(year))
+        except Exception as e:
+            logging.ERROR(f"DURING : URLScrapper method getEventNameandFilename : eventName, filename undefinded : error : {str(e)}")
+            
+            self.eventName = "unnamed"
+            self.filename = "unnamed"
+
+        logging.info(f"END : URLScrapper method getEventNameandFilename")
      
 
     def build(self):
-        logging.info("scrapURLS method start")
-        self.scrapURLS()
-        
-        logging.info("initPageScrappers method start")
-        self.initPageScrappers()
-        
-        logging.info("launchPageScrappers method start")
-        self.launchPageScrappers()
-        
-        logging.info("getAthleteData2CSV method start")
-        self.getAthleteData2CSV()
+        logging.info(f"START : URLScrapper method build")
 
-        logging.info("getEventNameandFilename method start")
+        self.scrapURLS()
+        self.initPageScrappers()
+        self.launchPageScrappers()
+        self.getAthleteData2CSV()
         self.getEventNameandFilename()
+
+        logging.info(f"END : URLScrapper method build")
+
         
 
 class PageScrapper(Scrapper):
@@ -116,23 +148,28 @@ class PageScrapper(Scrapper):
     def __init__(self, baseURL: str, club: str) -> None:
         self.baseURl = baseURL
         self.researchedURL = baseURL + "/coureur_search/" + "+".join(club.split(" "))
+        self.club = club
 
         self.athleteList: [Athlete] = []
 
         super().__init__()
-        logging.info(f"PageScrapper instance init ({self.baseURl})")
+        logging.info(f"START : PageScrapper instance (lien: {self.baseURl}, club: {self.club})")
 
     def scrapDataAthlete(self):
-        logging.info(f"PageScrapper scrapDataAthlete start (instance of {self.baseURl})")
+        logging.info(f"START : PageScrapper method scrapDataAthlete : (lien: {self.baseURl}, club: {self.club})")
 
         soup = self.scrapPage(self.researchedURL)
 
-        race_event = soup.find_all("h2")[1].text.split(":")[1].split("-")
-        race = race_event[1]
-        event = race_event[0]
+        try :
+            race_event = soup.find_all("h2")[1].text.split(":")[1].split("-")
+            race = race_event[1]
+            event = race_event[0]
+        except Exception as e:
+            logging.ERROR(f"DURING : PageScrapper method scrapDataAthlete : (lien: {self.baseURl}, club: {self.club}) : error {str(e)}")
 
         try:
             for tr in soup.find(id="detail-course").find("tbody").find_all("tr"):
+
                 try:
 
                     rank = tr.find("td", class_="col--classementGlobal").find("a").find("span").text.strip()
@@ -141,11 +178,11 @@ class PageScrapper(Scrapper):
 
                     self.athleteList.append(Athlete(rank, name, time, race, event))
                 except Exception as e:
-                    logging.error(f"PageScrapper scrapDataAthlete error (find data) (instance of {self.baseURl}) error message: {str(e)}")
+                    logging.error(f"DURING : PageScrapper method scrapDataAthlete : error find data : URL {self.baseURl} : error message: {str(e)}")
 
         except Exception as e:
             slug = slugify(self.baseURl)
-            logging.warning(f"PageScrapper scrapDataAthlete warning (find table), check ./errors_pages/{slug}.html (instance of {self.baseURl}) error message: {str(e)}")
+            logging.warning(f"DURING : PageScrapper method scrapDataAthlete : error find table : check ./errors_pages/{slug}.html : URL {self.baseURl} : error message: {str(e)}")
 
             with open(f"./errors_pages/{slug}.html", "w", encoding="utf8") as f:
                 f.write(str(soup))

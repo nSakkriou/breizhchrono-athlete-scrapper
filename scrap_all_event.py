@@ -9,6 +9,7 @@ from mail import Mailer
 class Race:
     name: str
     url: str
+    eventName: str = None
 
     def splitAndRecompose(self):
         temp = self.name.split(" - ")
@@ -29,15 +30,36 @@ class ScrapperEventPage(Scrapper):
         self.mail = mail
         self.receiver = receiver
 
+        self.baseURL = "https://www.breizhchrono.com"
+
         super().__init__()
 
+        # Logs
+        logging.basicConfig(filename=f'./log/{str(datetime.datetime.today())}.log', format='%(asctime)s; %(levelname)s; %(message)s', level=logging.INFO, encoding="utf8")
+        
+        if mail:
+            logging.info(f"START : ScrapperEventPage instance (MAIL: ON, EMAIL RECEIVER: {receiver}, CLUB: {club})")
+        else:
+            logging.info(f"START : ScrapperEventPage instance (CLUB: {club})")
+
+
     def getAllRace(self):
+        logging.info(f"START : ScrapperEventPage method getAllRace")
+
         soup = self.scrapPage(self.URLEventsList)
 
         for td in soup.find_all("td", class_="courseName"):
-            self.raceList.append(Race(td.find("a").text, td.find("a")["href"]))
+            race = Race(td.find("a").text, self.baseURL + td.find("a")["href"])
+            self.raceList.append(race)
+            logging.info(f"DURING : ScrapperEventPage method getAllRace : add race ({race.show()})")
+
+
+        logging.info(f"END : ScrapperEventPage method getAllRace")
+
 
     def getUniqueEvent(self):
+        logging.info(f"START : ScrapperEventPage method getUniqueEvent")
+
         for race in self.raceList:
             race.splitAndRecompose()
 
@@ -54,47 +76,58 @@ class ScrapperEventPage(Scrapper):
 
             if flag:
                 self.singleEventList.append(race)
+                logging.info(f"DURING : ScrapperEventPage method getUniqueEvent : add unique event ({race.show()})")
+                
+
+        logging.info(f"END : ScrapperEventPage method getUniqueEvent")
 
     def updateDB(self):
-        pass
+        logging.info(f"START : ScrapperEventPage method updateDB")
+        logging.info(f"END : ScrapperEventPage method updateDB")
         #Update sqlite DB with new data (singleEventList)
 
     def launchScriptOnAllEvent(self):
+        logging.info(f"START : ScrapperEventPage method launchScriptOnAllEvent")
+
         for event in self.singleEventList:
             scrap_one_event(event.url, self.club, self.mail, self.receiver)
+            logging.info(f"DURING : ScrapperEventPage method launchScriptOnAllEvent : start scrapping event ({event.url})")
+            
+
+        logging.info(f"END : ScrapperEventPage method launchScriptOnAllEvent")
+
 
 
     def build(self):
+        logging.info(f"START : ScrapperEventPage method build")
+        start_time = time.time()
+
         self.getAllRace()
         self.getUniqueEvent()
         self.updateDB()
         self.launchScriptOnAllEvent()
 
+        total_time_total = time.time() - start_time
+        logging.info(f"END : ScrapperEventPage method build : time ({total_time_total})")
+
+
+
+
 def scrap_one_event(lien: str, club: str, mail: bool, receiver: str):
-    start_time = time.time()
-    today = str(datetime.date.today())
-
-    logging.basicConfig(filename=f'./log/{today}.log', format='%(asctime)s; %(levelname)s; %(message)s', level=logging.INFO, encoding="utf8")
-
-    logging.info(f"**Started with param (lien: {lien}, club: {club})**")
     urls = URLScrapper(lien, club)
     urls.build()
 
-    total_time_scrapping = time.time() - start_time
-    logging.info(f"*End scrapping - duration: {total_time_scrapping}*")
-
     if mail:
+        logging.info(f"START : send mail (receiver: {receiver}, lien: {lien})")
         mailer = Mailer(receiver, urls.filename, urls.eventName, club)
         mailer.setup()
         mailer.sendMail()
-
-    total_time_total = time.time() - start_time
-    logging.info(f"**End scrapping + mail - duration: {total_time_total}**")
+        logging.info(f"END : send mail (receiver: {receiver}, lien: {lien})")
 
 @click.command()
 
 @click.option("--club", default="Rennes triathlon", help="Nom du club recherché")
-@click.option("--mail", is_flag=True, show_default=True, default=True, help="Envoi de mail ou non")
+@click.option("--mail", is_flag=True, show_default=True, default=False, help="Envoi de mail ou non")
 @click.option("--receiver", default="nathansakkriou@gmail.com", help="Email de la personne voulant recevoir les données")
 def main(club: str, mail: bool, receiver: str):
     scrapEvent = ScrapperEventPage(club, mail, receiver)
