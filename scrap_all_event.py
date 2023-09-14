@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+import json
 from scrapper import Scrapper
 import click, logging
 from scrapper import *
@@ -32,6 +33,15 @@ class ScrapperEventPage(Scrapper):
         self.receiver = receiver
 
         self.baseURL = "https://www.breizhchrono.com"
+
+        with open(EVENT_JSON_FILE, "r", encoding="utf-8") as f:
+            try:
+                self.events_stored = json.load(f)
+            except:
+                self.events_stored = {"events" : []}
+
+            if self.events_stored == {}:
+                self.events_stored = {"events" : []}
 
         super().__init__()
 
@@ -73,7 +83,9 @@ class ScrapperEventPage(Scrapper):
                     flag = False
                     break
 
-                # Add compare to sqlite DB
+                if(race.eventName in self.events_stored["events"]):
+                    flag = False
+                    break
 
             if flag:
                 self.singleEventList.append(race)
@@ -84,8 +96,15 @@ class ScrapperEventPage(Scrapper):
 
     def updateDB(self):
         logging.info(f"START : ScrapperEventPage method updateDB")
+
+        for event in self.singleEventList:
+            self.events_stored["events"].append(event.eventName)
+
+        with open(EVENT_JSON_FILE, "w", encoding="utf-8") as f:
+            f.write(json.dumps(self.events_stored, ensure_ascii=False))
+
+
         logging.info(f"END : ScrapperEventPage method updateDB")
-        #Update sqlite DB with new data (singleEventList)
 
     def launchScriptOnAllEvent(self):
         logging.info(f"START : ScrapperEventPage method launchScriptOnAllEvent")
