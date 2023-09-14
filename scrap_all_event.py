@@ -4,6 +4,7 @@ import click, logging
 from scrapper import *
 import datetime, time
 from mail import Mailer
+from config import *
 
 @dataclass
 class Race:
@@ -35,12 +36,12 @@ class ScrapperEventPage(Scrapper):
         super().__init__()
 
         # Logs
-        logging.basicConfig(filename=f'./log/{str(datetime.datetime.today())}.log', format='%(asctime)s; %(levelname)s; %(message)s', level=logging.INFO, encoding="utf8")
+        logging.basicConfig(filename=f'./log/{str(datetime.date.today())}.log', format='%(asctime)s; %(levelname)s; %(message)s', level=logging.INFO, encoding="utf8")
         
         if mail:
-            logging.info(f"START : ScrapperEventPage instance (MAIL: ON, EMAIL RECEIVER: {receiver}, CLUB: {club})")
+            logging.info(f"--------- START : ScrapperEventPage instance (MAIL: ON, EMAIL RECEIVER: {receiver}, CLUB: {club}) ---------")
         else:
-            logging.info(f"START : ScrapperEventPage instance (CLUB: {club})")
+            logging.info(f"--------- START : ScrapperEventPage instance (CLUB: {club}) ---------")
 
 
     def getAllRace(self):
@@ -126,12 +127,14 @@ def scrap_one_event(lien: str, club: str, mail: bool, receiver: str):
 
 @click.command()
 
-@click.option("--club", default="Rennes triathlon", help="Nom du club recherché")
-@click.option("--mail", is_flag=True, show_default=True, default=False, help="Envoi de mail ou non")
-@click.option("--receiver", default="nathansakkriou@gmail.com", help="Email de la personne voulant recevoir les données")
+@click.option("--club", default=DEFAULT_CLUB, help="Nom du club recherché")
+@click.option("--mail", is_flag=True, show_default=True, default=DEFAULT_MAIL_FLAG, help="Envoi de mail ou non")
+@click.option("--receiver", default=DEFAULT_MAIL_RECEIVER, help="Email de la personne voulant recevoir les données")
 def main(club: str, mail: bool, receiver: str):
     scrapEvent = ScrapperEventPage(club, mail, receiver)
     scrapEvent.build()
+    logging.info(f"--------- END : ScrapperEventPage instance ---------")
+
 
 if __name__ == "__main__":
     main()

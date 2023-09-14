@@ -4,9 +4,14 @@ chronométrée par Breizh Chrono.
 Fonctionnement :
 python main.py --lien url_course_breizhchrono --club nom_du_club --mail True/False --receiver email_du_receveur
 
-Pour parametrer l'envoi de mail il suffit de créer un fichier config.py avec à l'intérieur deux variables :
-GMAIL_EMAIL
-GMAIL_PASSWORD
+Pour parametrer l'envoi de mail il suffit de créer un fichier config.py avec à l'intérieur ces variables :
+GMAIL_EMAIL: Str
+GMAIL_PASSWORD: str
+PAGE_ERROR: bool
+
+DEFAULT_CLUB: str
+DEFAULT_MAIL_FLAG: bool
+DEFAULT_MAIL_RECEIVER: str
 
 En utilisant les mots de passes d'application.
 Pour faire cette manip, il y a ce tuto : https://www.youtube.com/watch?v=g_j6ILT-X0k&t=464s&ab_channel=ThePyCoach

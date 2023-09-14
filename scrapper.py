@@ -3,11 +3,15 @@ import os, requests, csv, logging
 from dataclasses import dataclass
 from slugify import slugify
 import datetime
+from config import *
 
 class Scrapper:
 
+    i = 0
     def __init__(self) -> None:
         self.headers = {'User-Agent':'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/47.0.2526.106 Safari/537.36'}
+
+        Scrapper.i += 1
 
     def scrapPage(self, URL: str) -> BeautifulSoup:
         response = requests.get(URL, self.headers, timeout=10)
@@ -39,16 +43,14 @@ class AthleteList:
         try:
             event_name = self.list[1].event
             nameFile = slugify(event_name + "-" + str(year))
+            with open(f"./data/{nameFile}.csv", "w", newline="", encoding="utf8") as file:
+                write = csv.writer(file)
+
+                for athlete in self.list:
+                    write.writerow(athlete.toList())
+
         except Exception as e:
-            logging.warning("No athlete of club found on this event")
-            event_name = "unnamed"
-            nameFile = "unnamed"
-
-        with open(f"./data/{nameFile}.csv", "w", newline="", encoding="utf8") as file:
-            write = csv.writer(file)
-
-            for athlete in self.list:
-                write.writerow(athlete.toList())
+            logging.debug("No athlete of club found on this event")
 
 class URLScrapper(Scrapper):
 
@@ -79,11 +81,16 @@ class URLScrapper(Scrapper):
 
         soup = self.scrapPage(self.URL)
         
+
         raceContainer = soup.find("div", id="cop-course-container")
-        for a in raceContainer.find_all("a"):
-            race_link = self.domainName + a["href"]
-            self.listURLS.append(race_link)
-            logging.info(f"DURING : URLScrapper method scrapURLS : add race {race_link}")
+        
+        try:
+            for a in raceContainer.find_all("a"):
+                race_link = self.domainName + a["href"]
+                self.listURLS.append(race_link)
+                logging.info(f"DURING : URLScrapper method scrapURLS : add race {race_link}")
+        except Exception as e:
+            logging.warning(f"DURING : URLScrapper method scrapURLS : can't read race container : error {str(e)}")
 
         logging.info(f"END : URLScrapper method scrapURLS")
 
@@ -118,11 +125,13 @@ class URLScrapper(Scrapper):
         logging.info(f"END : URLScrapper method getEventNameandFilename")
 
         year = datetime.date.today().year
+
         try:
             self.eventName = self.athleteList.list[1].event
             self.filename = slugify(self.eventName + "-" + str(year))
+        
         except Exception as e:
-            logging.ERROR(f"DURING : URLScrapper method getEventNameandFilename : eventName, filename undefinded : error : {str(e)}")
+            logging.warning(f"DURING : URLScrapper method getEventNameandFilename : eventName, filename undefinded : No athletes did this race :error : {str(e)}")
             
             self.eventName = "unnamed"
             self.filename = "unnamed"
@@ -165,27 +174,38 @@ class PageScrapper(Scrapper):
             race = race_event[1]
             event = race_event[0]
         except Exception as e:
-            logging.ERROR(f"DURING : PageScrapper method scrapDataAthlete : (lien: {self.baseURl}, club: {self.club}) : error {str(e)}")
+            logging.error(f"DURING : PageScrapper method scrapDataAthlete : (lien: {self.baseURl}, club: {self.club}) : error {str(e)}")
 
-        try:
-            for tr in soup.find(id="detail-course").find("tbody").find_all("tr"):
+        isEmpty = soup.find("p", id="course-notice")
+        if isEmpty:
+            logging.info(f"DURING : URLScrapper method scrapURLS : no one of {self.club} do this race ({self.URL})")
+        else:
+            try:
+                for tr in soup.find(id="detail-course").find("tbody").find_all("tr"):
 
-                try:
+                    try:
 
-                    rank = tr.find("td", class_="col--classementGlobal").find("a").find("span").text.strip()
-                    name = tr.find("td", class_="col--name").find("a").text.strip()
-                    time = tr.find("td", class_="col--time").find("a").text.strip()
+                        rank = tr.find("td", class_="col--classementGlobal").find("a").find("span").text.strip()
+                        name = tr.find("td", class_="col--name").find("a").text.strip()
+                        time = tr.find("td", class_="col--time").find("a").text.strip()
 
-                    self.athleteList.append(Athlete(rank, name, time, race, event))
-                except Exception as e:
-                    logging.error(f"DURING : PageScrapper method scrapDataAthlete : error find data : URL {self.baseURl} : error message: {str(e)}")
+                        self.athleteList.append(Athlete(rank, name, time, race, event))
+                    except Exception as e:
+                        logging.error(f"DURING : PageScrapper method scrapDataAthlete : error find data : URL {self.baseURl} : error message: {str(e)}")
 
-        except Exception as e:
-            slug = slugify(self.baseURl)
-            logging.warning(f"DURING : PageScrapper method scrapDataAthlete : error find table : check ./errors_pages/{slug}.html : URL {self.baseURl} : error message: {str(e)}")
+            except Exception as e:
+                slug = slugify(self.baseURl)
 
-            with open(f"./errors_pages/{slug}.html", "w", encoding="utf8") as f:
-                f.write(str(soup))
+                if PAGE_ERROR_FLAG:
+                    logging.warning(f"DURING : PageScrapper method scrapDataAthlete : error find table : check ./errors_pages/{slug}.html : URL {self.baseURl} : error message: {str(e)}")
+
+                    with open(f"./errors_pages/{slug}.html", "w", encoding="utf8") as f:
+                        f.write(str(soup))
+                else:
+                    logging.warning(f"DURING : PageScrapper method scrapDataAthlete : error find table : error message: {str(e)}")
+
+        logging.info(f"END : PageScrapper method scrapDataAthlete")
+
 
 
     
