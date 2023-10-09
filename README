@@ -7,11 +7,14 @@ python scrap_all_event --lien url_course_breizhchrono --club nom_du_club --mail 
 Pour parametrer l'envoi de mail il suffit de créer un fichier config.py avec à l'intérieur ces variables :
 GMAIL_EMAIL: Str
 GMAIL_PASSWORD: str
-PAGE_ERROR: bool
+PAGE_ERROR_FLAG: bool
 
 DEFAULT_CLUB: str
 DEFAULT_MAIL_FLAG: bool
 DEFAULT_MAIL_RECEIVER: str
+EVENT_JSON_FILE: str (JSON VIDE pour l'initialisation)
 
 En utilisant les mots de passes d'application.
 Pour faire cette manip, il y a ce tuto : https://www.youtube.com/watch?v=g_j6ILT-X0k&t=464s&ab_channel=ThePyCoach
+
+créer un dossier data et log
