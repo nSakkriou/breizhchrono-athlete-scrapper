@@ -23,6 +23,9 @@ def main(lien: str, club: str, mail: bool, receiver: str):
     total_time_scrapping = time.time() - start_time
     logging.info(f"*End scrapping - duration: {total_time_scrapping}*")
 
+
+    logging.info(f"Info - mail flag value : {mail}")
+
     if mail:
         mailer = Mailer(receiver, urls.filename, urls.eventName, club)
         mailer.setup()

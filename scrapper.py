@@ -6,7 +6,6 @@ import datetime
 from config import *
 
 class Scrapper:
-
     i = 0
     def __init__(self) -> None:
         self.headers = {'User-Agent':'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/47.0.2526.106 Safari/537.36'}
@@ -21,18 +20,20 @@ class Scrapper:
 @dataclass
 class Athlete:
     rank: str
+    sex_rank: str
+    sex: str
     name: str
     time: str
     race: str
     event: str
 
     def toList(self):
-        return [self.rank, self.name, self.time, self.race, self.event]
+        return [self.rank, self.sex_rank, self.sex, self.name, self.time, self.race, self.event]
 
 class AthleteList:
     
     def __init__(self) -> None:
-        self.list: [Athlete] = [Athlete("Classement", "Nom prenom", "Temps", "Nom de la course", "Evenement")]
+        self.list: [Athlete] = [Athlete("Classement", "Classement par sexe", "Sexe", "Nom prenom", "Temps", "Nom de la course", "Evenement")]
 
     def addList2AthleteList(self, athleteList: [Athlete]):
         for athlete in athleteList:
@@ -157,6 +158,10 @@ class PageScrapper(Scrapper):
     def __init__(self, baseURL: str, club: str) -> None:
         self.baseURl = baseURL
         self.researchedURL = baseURL + "/coureur_search/" + "+".join(club.split(" "))
+        
+        self.researchedURLFemale = self.researchedURL + "/sexe/f"
+        self.researchedURLMale = self.researchedURL + "/sexe/m"
+
         self.club = club
 
         self.athleteList: [Athlete] = []
@@ -167,42 +172,54 @@ class PageScrapper(Scrapper):
     def scrapDataAthlete(self):
         logging.info(f"START : PageScrapper method scrapDataAthlete : (lien: {self.baseURl}, club: {self.club})")
 
-        soup = self.scrapPage(self.researchedURL)
+        Urls = [self.researchedURLFemale, self.researchedURLMale]
 
-        try :
-            race_event = soup.find_all("h2")[1].text.split(":")[1].split("-")
-            race = race_event[1]
-            event = race_event[0]
-        except Exception as e:
-            logging.error(f"DURING : PageScrapper method scrapDataAthlete : (lien: {self.baseURl}, club: {self.club}) : error {str(e)}")
+        for i in range(len(Urls)):
 
-        isEmpty = soup.find("p", id="course-notice")
-        if isEmpty:
-            logging.info(f"DURING : URLScrapper method scrapURLS : no one of {self.club} do this race ({self.URL})")
-        else:
-            try:
-                for tr in soup.find(id="detail-course").find("tbody").find_all("tr"):
+            logging.info(f"INFO : PageScrapper method scrapDataAthlete : (lien: {Urls[i]}, club: {self.club})")
 
-                    try:
+            if i == 0:
+                sex = "femme"
+            else:
+                sex = "homme"
 
-                        rank = tr.find("td", class_="col--classementGlobal").find("a").find("span").text.strip()
-                        name = tr.find("td", class_="col--name").find("a").text.strip()
-                        time = tr.find("td", class_="col--time").find("a").text.strip()
+            url2scrap = Urls[i]
+            soup = self.scrapPage(url2scrap)
 
-                        self.athleteList.append(Athlete(rank, name, time, race, event))
-                    except Exception as e:
-                        logging.error(f"DURING : PageScrapper method scrapDataAthlete : error find data : URL {self.baseURl} : error message: {str(e)}")
-
+            try :
+                race_event = soup.find_all("h2")[1].text.split(":")[1].split("-")
+                race = race_event[1]
+                event = race_event[0]
             except Exception as e:
-                slug = slugify(self.baseURl)
+                logging.error(f"DURING : PageScrapper method scrapDataAthlete : (lien: {self.baseURl}, club: {self.club}) : error {str(e)}")
 
-                if PAGE_ERROR_FLAG:
-                    logging.warning(f"DURING : PageScrapper method scrapDataAthlete : error find table : check ./errors_pages/{slug}.html : URL {self.baseURl} : error message: {str(e)}")
+            isEmpty = soup.find("p", id="course-notice")
+            if isEmpty:
+                logging.info(f"DURING : URLScrapper method scrapURLS : no one of {self.club} do this race ({self.URL})")
+            else:
+                try:
+                    for tr in soup.find(id="detail-course").find("tbody").find_all("tr"):
 
-                    with open(f"./errors_pages/{slug}.html", "w", encoding="utf8") as f:
-                        f.write(str(soup))
-                else:
-                    logging.warning(f"DURING : PageScrapper method scrapDataAthlete : error find table : error message: {str(e)}")
+                        try:
+                            rank = tr.find("td", class_="col--classementGlobal").find("a").find("span").text.strip()
+                            sex_rank = tr.find("td", class_="col--classementGender").find("a").find("span").text.strip()
+                            name = tr.find("td", class_="col--name").find("a").text.strip()
+                            time = tr.find("td", class_="col--time").find("a").text.strip()
+
+                            self.athleteList.append(Athlete(rank, sex_rank, sex, name, time, race, event))
+                        except Exception as e:
+                            logging.error(f"DURING : PageScrapper method scrapDataAthlete : error find data : URL {self.baseURl} : error message: {str(e)}")
+
+                except Exception as e:
+                    slug = slugify(self.baseURl)
+
+                    if PAGE_ERROR_FLAG:
+                        logging.warning(f"DURING : PageScrapper method scrapDataAthlete : error find table : check ./errors_pages/{slug}.html : URL {self.baseURl} : error message: {str(e)}")
+
+                        with open(f"./errors_pages/{slug}.html", "w", encoding="utf8") as f:
+                            f.write(str(soup))
+                    else:
+                        logging.warning(f"DURING : PageScrapper method scrapDataAthlete : error find table : error message: {str(e)}")
 
         logging.info(f"END : PageScrapper method scrapDataAthlete")
 
