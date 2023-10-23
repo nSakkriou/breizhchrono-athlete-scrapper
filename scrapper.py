@@ -213,8 +213,10 @@ class PageScrapper(Scrapper):
                 except Exception as e:
                     slug = slugify(self.baseURl)
 
-                    if PAGE_ERROR_FLAG:
+                    if PAGE_ERROR_GENERATION_FLAG:
                         logging.warning(f"DURING : PageScrapper method scrapDataAthlete : error find table : check ./errors_pages/{slug}.html : URL {self.baseURl} : error message: {str(e)}")
+                        
+                        os.makedirs("./errors_pages")
 
                         with open(f"./errors_pages/{slug}.html", "w", encoding="utf8") as f:
                             f.write(str(soup))
