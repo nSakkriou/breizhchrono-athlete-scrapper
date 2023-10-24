@@ -10,16 +10,16 @@ class ClubList(JSONAble):
 
         self.athleteList = AthleteList()
 
-    def addAthelete(self, athlete: Athlete):
+    def addAthelete(self, athlete: Athlete) -> str:
         return self.athleteList.addAthlete(athlete)
     
-    def addAthleteWithParam(self, firstName: str, lastName: str, sexe: AthleteSex):
+    def addAthleteWithParam(self, firstName: str, lastName: str, sexe: AthleteSex) -> str:
         return self.addAthelete(Athlete(firstName, lastName, self.clubName, sexe))
     
-    def deleteAthlete(self, athleteId: str):
+    def deleteAthlete(self, athleteId: str) -> dict:
         return self.athleteList.deleteAthlete(athleteId)
     
-    def getAthlete(self, athleteId: str):
+    def getAthlete(self, athleteId: str) -> Athlete:
         return self.athleteList.getAthete(athleteId)
     
     def toJSON(self) -> dict:
@@ -38,11 +38,6 @@ class ClubList(JSONAble):
     def findAthleteWithFirstOrLastName(self, name: str, strict: bool):
         return self.athleteList.findAthleteWithFirstOrLastName(name, strict)
 
-    def findFirstAthleteWithFirstOrLastName(self, name: str, strict: bool):
-        try:
-            return self.athleteList.findAthleteWithFirstOrLastName(name, strict)[0]
-        except:
-            return []
     # --------- #
 
     def exportAthleteResult(self, athleteId):
@@ -60,20 +55,30 @@ class ClubList(JSONAble):
     # --------- #
 
     def loadAthleteWithCSV(self, csvPath: str):
-        with open(csvPath, newline='') as csvfile:
-            athleteCSV = csv.reader(csvfile, delimiter=';')
+        athleteCSV = Util.loadCSV(csvPath, False)
 
-            for athlete in athleteCSV:
-                aAthlete = Athlete(athlete[0], athlete[1], self.clubName, athlete[2])
+        for athlete in athleteCSV:
+            aAthlete = Athlete(athlete[0], athlete[1], self.clubName, athlete[2])
 
-                # Check doublon a faire
-                self.addAthelete(aAthlete)
+            self.addAthelete(aAthlete)
+
+    def loadAthleteAndResultFromResultCSV(self, csvPath: str):
+        athleteAndResultCSV = Util.loadCSV(csvPath, True, ",")
+
+        for athleteAndResult in athleteAndResultCSV:
+            nomPrenom = Util.parseNomPrenom(athleteAndResult[3])
+            
+            id = self.addAthleteWithParam(nomPrenom[0], nomPrenom[1] , athleteAndResult[2])["athleteId"]
+
+            if id != None:
+                self.getAthlete(id).addResult(athleteAndResult[0], athleteAndResult[1], athleteAndResult[4], athleteAndResult[5], athleteAndResult[6])
+
 
 if __name__ == "__main__":
     club = ClubList("Rennes Triathlon")
-    #club.loadAthleteWithCSV("rennes_tri_sportif.csv")
+    print(club)
 
-    #club.addAthleteWithParam("Nathan", "SAkkriou", AthleteSex.MALE)
+    # club.loadAthleteWithCSV("rennes_tri_sportif.csv")
+    club.loadAthleteAndResultFromResultCSV("data/duathlon-du-donjon-2023.csv")
 
-    #print(club.athleteList.toJSON())
     club.save()

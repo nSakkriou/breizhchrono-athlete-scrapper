@@ -8,7 +8,7 @@ class JSONAble:
         return self.id
 
     def toJSON(self) -> dict:
-        return self.__dict__
+        return self.__dict__.copy()
     
     def __str__(self) -> str:
         return json.dumps(self.toJSON())

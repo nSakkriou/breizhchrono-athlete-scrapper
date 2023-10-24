@@ -1,4 +1,4 @@
-from Athlete import Athlete
+from Athlete import Athlete, AthleteSex
 from JSONAble import JSONAble
 
 class AthleteList(JSONAble):
@@ -13,14 +13,24 @@ class AthleteList(JSONAble):
     def updateMap(self, athlete: Athlete):
         self.athleteMapIdName[athlete.lastName + " " + athlete.firstName] = athlete.getId()
 
-    def addAthlete(self, athlete: Athlete):
-        self.athleteList.append(athlete)
-        self.setCount()
+    def removeMap(self, athleteId: str):
+        del self.athleteMapIdName[athleteList]
 
-        return {"athleteId" : athlete.getId()}
+    def addAthlete(self, athlete: Athlete):
+        try:
+            self.athleteMapIdName[(athlete.lastName + " " + athlete.firstName)]
+            return {"athleteId" : None, "info" : "doublons"}
+        
+        except:
+            self.athleteList.append(athlete)
+            self.setCount()
+            self.updateMap(athlete)
+
+            return {"athleteId" : athlete.getId()}
     
     def getAthete(self, athleteId):
         for athlete in self.athleteList:
+            print(athlete)
             if athlete.getId() == athleteId:
                 return athlete
             
@@ -30,27 +40,41 @@ class AthleteList(JSONAble):
         for athlete in self.athleteList:
             if athlete.getId() == athleteId:
                 self.athleteList.remove(athlete)
+                self.removeMap(athlete.getId())
                 return {"item" : athlete, "info" : "correctly deleted"}
                     
         return {"item" : None, "info" : "not found"}
     
     def toJSON(self):
-        dictArgs = self.__dict__
-        print(dictArgs)
+        dictArgs = super().toJSON()
         dictArgs["athleteList"] = [athlete.toJSON() for athlete in self.athleteList]
         return dictArgs
     
     # --------- #
-    def findAthleteWithFirstOrLastName(self, name:str, strict: bool):
-        resultsList = []
-        for athlete in self.athleteList:
+    def checkIfNameIsPresent(self, name: str, strict: bool):
+        for athleteName in self.athleteMapIdName.keys():
 
             if strict:
-                if athlete.firstName == name or athlete.lastName == name:
-                    resultsList.append(athlete)
-
+                if athleteName.lower() == name.lower():
+                    return self.athleteMapIdName[athleteName]
+                
             else:
-                if name in athlete.firstName or name in athlete.lastName:
-                    resultsList.append(athlete)
+                if name.lower() in athleteName.lower():
+                    return self.athleteMapIdName[athleteName]
+                
+        return None
 
-        return resultsList
+    def findAthleteWithFirstOrLastName(self, name:str, strict: bool):
+        if id := self.checkIfNameIsPresent(name, strict) != None:
+            for athlete in self.athleteList:
+                if athlete.getId() == id:
+                    return athlete
+
+        return None
+    
+if __name__ == "__main__":
+    athleteList = AthleteList()
+    print(athleteList)
+
+    athleteList.addAthlete(Athlete("Nathan", "Sakkriou", "Rennes Tri", AthleteSex.MALE))
+    print(athleteList)

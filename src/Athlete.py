@@ -42,6 +42,13 @@ class Athlete(JSONAble):
         return None
     
     def toJSON(self):
-        dictArgs = self.__dict__
+        dictArgs = super().toJSON()
         dictArgs["resultList"] = [res.toJSON() for res in self.resultList]
         return dictArgs
+    
+if __name__ == "__main__":
+    athlete = Athlete("Nathan", "Sakkriou", "Rennes Tri", AthleteSex.MALE)
+    print(athlete)
+
+    athlete.addResult("1", "1", "1h00", "Tri S", "Tri Carentan")
+    print(athlete)

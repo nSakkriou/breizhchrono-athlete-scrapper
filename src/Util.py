@@ -1,18 +1,18 @@
 import time, json
-import datetime
-import re
+from datetime import *
+import re, csv
 import unidecode
+from uuid import uuid4
 
 def slugify(text):
     text = unidecode.unidecode(text).lower()
     return re.sub(r'[\W_]+', '-', text)
 
 def getId():
-    id = str(time.time()).split(".")
-    return "".join(id)
+    return datetime.now().strftime('%Y%m%d%H%M%S-') + str(uuid4())
 
 def getActualYear():
-    today = datetime.date.today()
+    today = date.today()
     return today.year
 
 def loadClubFile(clubPathFile: str):
@@ -20,3 +20,28 @@ def loadClubFile(clubPathFile: str):
         data = json.load(f)
 
         print(data)
+
+def loadCSV(pathFile: str, haveHeader: bool, delimiter=";"):
+    with open(pathFile, newline="", encoding="utf8") as csvFile:
+        resultCSV = csv.reader(csvFile, delimiter=delimiter)
+        
+        resList = []
+        for res in resultCSV:
+            if haveHeader:
+                haveHeader = False
+            else:
+                resList.append(res)
+
+        return resList
+    
+def parseNomPrenom(nomPrenom: str):
+    if len(nomPrenomList := nomPrenom.split(" ")) == 2:
+        return nomPrenomList
+    
+    nomPrenomList.reverse()
+    prenom = nomPrenomList[0]
+
+    del nomPrenomList[0]
+    nomPrenomList.reverse()
+
+    return [prenom, " ".join(nomPrenomList)]
